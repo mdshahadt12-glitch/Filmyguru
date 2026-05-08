@@ -1,0 +1,101 @@
+# Filmyguru
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filmyguru - Ultimate Download Hub</title>
+    <style>
+        :root { --primary: #ffc107; --dark: #121212; --card-bg: #1e1e1e; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--dark); color: white; margin: 0; padding: 0; }
+        header { background: #000; padding: 20px; text-align: center; border-bottom: 2px solid var(--primary); }
+        .container { padding: 20px; max-width: 800px; margin: auto; }
+        
+        /* Movie Card Style */
+        .movie-card { background: var(--card-bg); border-radius: 10px; padding: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #333; }
+        .movie-info h3 { margin: 0; color: var(--primary); }
+        .download-btn { background: var(--primary); color: black; padding: 10px 15px; border-radius: 5px; text-decoration: none; font-weight: bold; }
+
+        /* Admin Section Style */
+        #admin-section { display: none; background: #222; padding: 20px; border-radius: 10px; margin-top: 30px; border: 1px dashed var(--primary); }
+        input { width: 90%; padding: 10px; margin: 10px 0; border-radius: 5px; border: none; }
+        .admin-toggle { cursor: pointer; color: #777; font-size: 12px; margin-top: 50px; display: block; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1 style="color: var(--primary); margin: 0;">Filmyguru</h1>
+    <p>আপনার প্রিয় মুভি ও গান ডাউনলোডের সেরা ঠিকানা</p>
+</header>
+
+<div class="container">
+    <div id="movie-list">
+        </div>
+
+    <span class="admin-toggle" onclick="showAdmin()">Admin Login</span>
+    
+    <div id="admin-section">
+        <h3>Admin Panel (Upload Content)</h3>
+        <input type="password" id="adminPass" placeholder="Enter Admin Password">
+        <hr>
+        <input type="text" id="mTitle" placeholder="Movie/Song Title">
+        <input type="text" id="mCat" placeholder="Category (e.g. Action, MP3)">
+        <input type="text" id="mLink" placeholder="Download URL (Drive/Telegram Link)">
+        <button onclick="saveData()" style="padding: 10px 20px; background: green; color: white; border: none; cursor: pointer;">Publish Now</button>
+    </div>
+</div>
+
+<script>
+    // ডাটাবেস হিসেবে ব্রাউজারের LocalStorage ব্যবহার করা হয়েছে (প্রাথমিকভাবে)
+    let movies = JSON.parse(localStorage.getItem('filmyguru_data')) || [];
+
+    function displayMovies() {
+        const list = document.getElementById('movie-list');
+        list.innerHTML = movies.length === 0 ? '<p>কোনো কন্টেন্ট পাওয়া যায়নি।</p>' : '';
+        movies.forEach((movie, index) => {
+            list.innerHTML += `
+                <div class="movie-card">
+                    <div class="movie-info">
+                        <h3>${movie.title}</h3>
+                        <p>${movie.category}</p>
+                    </div>
+                    <a href="${movie.link}" class="download-btn" target="_blank">Download</a>
+                </div>
+            `;
+        });
+    }
+
+    function showAdmin() {
+        document.getElementById('admin-section').style.display = 'block';
+    }
+
+    function saveData() {
+        const pass = document.getElementById('adminPass').value;
+        if(pass !== "1234") { // এখানে আপনার নিজের পাসওয়ার্ড দিন
+            alert("ভুল পাসওয়ার্ড!");
+            return;
+        }
+
+        const title = document.getElementById('mTitle').value;
+        const category = document.getElementById('mCat').value;
+        const link = document.getElementById('mLink').value;
+
+        if(title && link) {
+            movies.push({title, category, link});
+            localStorage.setItem('filmyguru_data', JSON.stringify(movies));
+            alert("সফলভাবে পাবলিশ হয়েছে!");
+            displayMovies();
+            // Form clear
+            document.getElementById('mTitle').value = '';
+            document.getElementById('mLink').value = '';
+        }
+    }
+
+    // সাইট লোড হলে মুভিগুলো দেখাবে
+    displayMovies();
+</script>
+
+</body>
+</html>
