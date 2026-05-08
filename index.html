@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Filmyguru - Live Download Hub</title>
+    <title>Filmyguru - Ultimate Download Hub</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <style>
@@ -12,7 +11,9 @@
         body { font-family: 'Segoe UI', sans-serif; background: var(--dark); color: white; margin: 0; padding: 0; }
         header { background: #000; padding: 20px; text-align: center; border-bottom: 2px solid var(--primary); }
         .container { padding: 20px; max-width: 800px; margin: auto; }
-        .movie-card { background: var(--card-bg); border-radius: 10px; padding: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #333; }
+        .movie-card { background: var(--card-bg); border-radius: 10px; overflow: hidden; margin-bottom: 20px; border: 1px solid #333; }
+        .movie-thumb { width: 100%; height: 200px; object-fit: cover; background: #333; }
+        .movie-info { padding: 15px; display: flex; justify-content: space-between; align-items: center; }
         .movie-info h3 { margin: 0; color: var(--primary); }
         .download-btn { background: var(--primary); color: black; padding: 10px 15px; border-radius: 5px; text-decoration: none; font-weight: bold; }
         #admin-section { display: none; background: #222; padding: 20px; border-radius: 10px; margin-top: 30px; border: 1px dashed var(--primary); }
@@ -22,7 +23,7 @@
 <body>
 <header>
     <h1 style="color: var(--primary); margin: 0;">Filmyguru</h1>
-    <p>আপনার প্রিয় মুভি ও গান ডাউনলোডের সেরা ঠিকানা</p>
+    <p>আপনার প্রিয় মুভি ও গান ডাউনলোডের সেরা ঠিকানা</p>
 </header>
 <div class="container">
     <div id="movie-list">লোডিং হচ্ছে...</div>
@@ -32,6 +33,7 @@
         <input type="password" id="adminPass" placeholder="Password (1234)">
         <input type="text" id="mTitle" placeholder="Movie Name">
         <input type="text" id="mCat" placeholder="Category">
+        <input type="text" id="mThumb" placeholder="Thumbnail Image Link (URL)">
         <input type="text" id="mLink" placeholder="Download Link">
         <button onclick="saveData()" style="width:100%; padding: 12px; background: green; color: white; border: none; border-radius: 5px; cursor: pointer;">Publish Now</button>
     </div>
@@ -40,7 +42,7 @@
     const firebaseConfig = {
         apiKey: "AIzaSyC28WASKHX4vMrUmrCRqr4Pvccvdbwj1KA",
         authDomain: "filmyguru-6d7ec.firebaseapp.com",
-        databaseURL: "https://filmyguru-6d7ec-default-rtdb.firebaseio.com",
+        databaseURL: "https://filmain-6d7ec-default-rtdb.firebaseio.com",
         projectId: "filmyguru-6d7ec",
         storageBucket: "filmyguru-6d7ec.firebasestorage.app",
         messagingSenderId: "976006726265",
@@ -55,19 +57,27 @@
         if (!data) { movieList.innerHTML = "<p>কোনো কন্টেন্ট নেই।</p>"; return; }
         Object.keys(data).reverse().forEach(id => {
             const movie = data[id];
-            movieList.innerHTML += `<div class="movie-card"><div class="movie-info"><h3>${movie.title}</h3><p>${movie.category}</p></div><a href="${movie.link}" class="download-btn" target="_blank">Download</a></div>`;
+            movieList.innerHTML += `<div class="movie-card">
+                <img src="${movie.thumb || 'https://via.placeholder.com/400x200'}" class="movie-thumb" alt="thumb">
+                <div class="movie-info">
+                    <div><h3>${movie.title}</h3><p>${movie.category}</p></div>
+                    <a href="${movie.link}" class="download-btn" target="_blank">Download</a>
+                </div>
+            </div>`;
         });
     });
     function saveData() {
         const pass = document.getElementById('adminPass').value;
-        if(pass !== "1234") { alert("ভুল পাসওয়ার্ড!"); return; }
+        if(pass !== "1234") { alert("ভুল পাসওয়ার্ড!"); return; }
         const title = document.getElementById('mTitle').value;
         const category = document.getElementById('mCat').value;
+        const thumb = document.getElementById('mThumb').value;
         const link = document.getElementById('mLink').value;
         if(title && link) {
-            db.ref("movies").push({ title, category, link }).then(() => {
-                alert("সফলভাবে পাবলিশ হয়েছে!");
+            db.ref("movies").push({ title, category, thumb, link }).then(() => {
+                alert("সফলভাবে পাবলিশ হয়েছে!");
                 document.getElementById('mTitle').value = '';
+                document.getElementById('mThumb').value = '';
                 document.getElementById('mLink').value = '';
             });
         }
