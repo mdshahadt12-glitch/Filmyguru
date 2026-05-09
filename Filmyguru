@@ -43,7 +43,7 @@
     const firebaseConfig = {
         apiKey: "AIzaSyC28WASKHX4vMrUmrCRqr4Pvccvdbwj1KA",
         authDomain: "filmyguru-6d7ec.firebaseapp.com",
-        databaseURL: ",https://filmyguru-6d7ec-default-rtdb.firebaseio.com
+        databaseURL: "https://filmyguru-6d7ec-default-rtdb.firebaseio.com
         projectId: "filmyguru-6d7ec",
         storageBucket: "filmyguru-6d7ec.firebasestorage.app",
         messagingSenderId: "976006726265",
